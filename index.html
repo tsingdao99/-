@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商业研讨会 · 签到系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0f14;
+  --surface: #161a22;
+  --surface2: #1e232d;
+  --border: #2a3040;
+  --text: #e8eaf0;
+  --text-dim: #8892a4;
+  --accent: #c9a54e;
+  --accent-glow: #c9a54e33;
+  --success: #34d399;
+  --success-bg: #34d39915;
+  --error: #f87171;
+  --error-bg: #f8717115;
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Decorative BG ─── */
+body::before {
+  content: '';
+  position: fixed;
+  top: -30%; left: -10%;
+  width: 60vw; height: 60vw;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.container {
+  position: relative; z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  min-height: 100vh;
+}
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 36px 0 28px;
+}
+.header .logo-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, var(--accent), #e8c86a);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 8px 32px var(--accent-glow);
+}
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--accent), #f0dfa0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header .subtitle {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-top: 6px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* ─── Tabs ─── */
+.tabs {
+  display: flex;
+  background: var(--surface);
+  border-radius: 50px;
+  padding: 4px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+}
+.tab {
+  flex: 1;
+  padding: 12px 0;
+  text-align: center;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .3s;
+  color: var(--text-dim);
+  border: none; background: none;
+}
+.tab.active {
+  background: var(--accent);
+  color: #0c0f14;
+  font-weight: 700;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+/* ─── Panels ─── */
+.panel { display: none; animation: fadeUp .4s ease; }
+.panel.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Card ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* ─── Input ─── */
+.input-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+.input-group input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  outline: none;
+  transition: border-color .3s, box-shadow .3s;
+}
+.input-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.input-group input::placeholder {
+  color: var(--text-dim);
+}
+
+/* ─── Button ─── */
+.btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all .25s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #e8c86a);
+  color: #0c0f14;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px var(--accent-glow);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+/* ─── Result ─── */
+.result-box {
+  display: none;
+  margin-top: 20px;
+  animation: fadeUp .5s ease;
+}
+.result-box.show { display: block; }
+
+.result-success {
+  background: var(--success-bg);
+  border: 1.5px solid var(--success);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-align: center;
+}
+.result-success .check-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 16px;
+  background: var(--success);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  animation: popIn .4s cubic-bezier(.17,.67,.35,1.5);
+}
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+.result-success .seat-label {
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.result-success .seat-value {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--success);
+  line-height: 1.2;
+}
+.result-success .name-label {
+  margin-top: 16px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+}
+.result-success .time-label {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.result-error {
+  background: var(--error-bg);
+  border: 1.5px solid var(--error);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  color: var(--error);
+  font-weight: 500;
+}
+
+/* ─── Upload ─── */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .3s;
+  margin-bottom: 16px;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+.upload-zone .upload-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+.upload-zone .upload-text {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.upload-zone .upload-text strong {
+  color: var(--accent);
+}
+
+/* ─── Table ─── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.data-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table .status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.status-badge.checked {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+.status-badge.pending {
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+/* ─── Stats ─── */
+.stats-row {
+  display: flex; gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.stat-card .stat-num {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--accent);
+}
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+/* ─── Format Hint ─── */
+.format-hint {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.format-hint code {
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+/* ─── Admin Password ─── */
+.admin-lock {
+  text-align: center;
+  padding: 40px 20px;
+}
+.admin-lock .lock-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+/* ─── Search in admin ─── */
+.search-bar {
+  position: relative;
+  margin-bottom: 16px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+.search-bar input:focus {
+  border-color: var(--accent);
+}
+.search-bar .search-icon {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* ─── QR section ─── */
+.qr-section {
+  text-align: center;
+  padding: 20px;
+}
+.qr-section canvas {
+  border-radius: 12px;
+  margin: 16px auto;
+  display: block;
+}
+.qr-note {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 14px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  z-index: 1000;
+  transition: transform .4s cubic-bezier(.17,.67,.35,1.1);
+  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-icon">✦</div>
+    <h1>SEMINAR</h1>
+    <div class="subtitle">商业研讨会 · 签到系统</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('checkin')">签到入口</button>
+    <button class="tab" onclick="switchTab('admin')">管理后台</button>
+  </div>
+
+  <!-- ═══════ Check-in Panel ═══════ -->
+  <div id="panel-checkin" class="panel active">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>参会签到</div>
+      <div class="input-group">
+        <input type="text" id="checkin-name" placeholder="请输入您的姓名" autocomplete="off" />
+      </div>
+      <button class="btn btn-primary" onclick="doCheckin()">
+        <span>查询签到</span>
+        <span>→</span>
+      </button>
+    </div>
+
+    <div id="checkin-result" class="result-box"></div>
+  </div>
+
+  <!-- ═══════ Admin Panel ═══════ -->
+  <div id="panel-admin" class="panel">
+
+    <!-- Admin Lock -->
+    <div id="admin-lock" class="card">
+      <div class="admin-lock">
+        <div class="lock-icon">🔐</div>
+        <p style="color:var(--text-dim);margin-bottom:20px;font-size:14px;">输入管理密码以进入后台</p>
+        <div class="input-group">
+          <input type="password" id="admin-pwd" placeholder="管理密码" />
+        </div>
+        <button class="btn btn-primary" onclick="adminLogin()">进入后台</button>
+      </div>
+    </div>
+
+    <!-- Admin Content (hidden by default) -->
+    <div id="admin-content" style="display:none;">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">总人数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-checked">0</div>
+          <div class="stat-label">已签到</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-pending">0</div>
+          <div class="stat-label">未签到</div>
+        </div>
+      </div>
+
+      <!-- Upload -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>上传座位表</div>
+        <div class="format-hint">
+          请上传 <code>CSV</code> 文件，格式：每行为 <code>姓名,座位号</code><br>
+          例如：张三,A-01
+        </div>
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+          <div class="upload-icon">📄</div>
+          <div class="upload-text">
+            点击上传 或 拖拽文件到此处<br>
+            <strong>支持 .csv 文件</strong>
+          </div>
+        </div>
+        <input type="file" id="file-input" accept=".csv" style="display:none" onchange="handleFile(event)" />
+        
+        <!-- Manual add -->
+        <div style="margin-top:12px; display:flex; gap:8px;">
+          <input type="text" id="manual-name" placeholder="姓名" style="flex:1;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;outline:none;" />
+          <input type="text" id="manual-seat" placeholder="座位号" style="width:100px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;outline:none;" />
+          <button class="btn btn-primary" style="width:auto;padding:12px 20px;font-size:14px;" onclick="manualAdd()">+</button>
+        </div>
+      </div>
+
+      <!-- QR Code -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>签到二维码</div>
+        <div class="qr-section">
+          <p style="color:var(--text-dim);font-size:14px;margin-bottom:16px;">参会者扫描此二维码即可进入签到页面</p>
+          <canvas id="qr-canvas"></canvas>
+          <div class="qr-note">
+            二维码指向当前页面地址<br>
+            请确保部署后再生成
+          </div>
+          <button class="btn btn-secondary" style="margin-top:16px;" onclick="generateQR()">生成二维码</button>
+        </div>
+      </div>
+
+      <!-- Attendee List -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>参会人员列表</div>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="搜索姓名..." oninput="renderTable()" />
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="attendee-table">
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>座位</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="card" style="border-color: var(--error);">
+        <div class="card-title"><span class="dot" style="background:var(--error)"></span>数据管理</div>
+        <button class="btn btn-secondary" style="border-color:var(--error);color:var(--error);" onclick="clearAllData()">清空所有数据</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- QR Code Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+<script>
+// ─── State ───
+let attendees = []; // [{name, seat, checked, checkedAt}]
+const ADMIN_PASSWORD = '2026';
+let adminUnlocked = false;
+
+// ─── Storage ───
+async function saveData() {
+  try {
+    await window.storage.set('seminar-attendees', JSON.stringify(attendees));
+  } catch(e) {
+    console.log('Storage save failed:', e);
+  }
+}
+
+async function loadData() {
+  try {
+    const result = await window.storage.get('seminar-attendees');
+    if (result && result.value) {
+      attendees = JSON.parse(result.value);
+    }
+  } catch(e) {
+    console.log('No existing data');
+  }
+}
+
+// ─── Tabs ───
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (tab === 'checkin' && i === 0) || (tab === 'admin' && i === 1));
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ─── Check-in ───
+function doCheckin() {
+  const nameInput = document.getElementById('checkin-name');
+  const name = nameInput.value.trim();
+  const resultBox = document.getElementById('checkin-result');
+
+  if (!name) {
+    showToast('请输入您的姓名');
+    nameInput.focus();
+    return;
+  }
+
+  const person = attendees.find(a => a.name === name);
+
+  if (!person) {
+    resultBox.innerHTML = `
+      <div class="result-error">
+        <div style="font-size:32px;margin-bottom:12px;">😔</div>
+        <div>未找到「${escHtml(name)}」的签到信息</div>
+        <div style="font-size:13px;margin-top:8px;opacity:.7;">请确认姓名是否正确，或联系工作人员</div>
+      </div>`;
+    resultBox.classList.add('show');
+    return;
+  }
+
+  // Mark as checked
+  if (!person.checked) {
+    person.checked = true;
+    person.checkedAt = new Date().toLocaleString('zh-CN');
+    saveData();
+  }
+
+  resultBox.innerHTML = `
+    <div class="result-success">
+      <div class="check-icon">✓</div>
+      <div class="seat-label">您的座位</div>
+      <div class="seat-value">${escHtml(person.seat)}</div>
+      <div class="name-label">${escHtml(person.name)}，欢迎参加！</div>
+      <div class="time-label">签到时间：${person.checkedAt}</div>
+    </div>`;
+  resultBox.classList.add('show');
+  nameInput.value = '';
+}
+
+// ─── Admin ───
+function adminLogin() {
+  const pwd = document.getElementById('admin-pwd').value;
+  if (pwd === ADMIN_PASSWORD) {
+    adminUnlocked = true;
+    document.getElementById('admin-lock').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    updateStats();
+    renderTable();
+  } else {
+    showToast('密码错误');
+  }
+}
+
+// ─── File Upload ───
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const text = ev.target.result;
+    parseCSV(text);
+  };
+  reader.readAsText(file);
+}
+
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  let added = 0;
+
+  for (const line of lines) {
+    const parts = line.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+    if (parts.length >= 2) {
+      const name = parts[0];
+      const seat = parts[1];
+      if (name && seat && !name.match(/^姓名$/i) && !name.match(/^name$/i)) {
+        // Check duplicate
+        if (!attendees.find(a => a.name === name)) {
+          attendees.push({ name, seat, checked: false, checkedAt: null });
+          added++;
+        }
+      }
+    }
+  }
+
+  saveData();
+  updateStats();
+  renderTable();
+  showToast(`成功导入 ${added} 位参会者`);
+}
+
+// ─── Manual Add ───
+function manualAdd() {
+  const name = document.getElementById('manual-name').value.trim();
+  const seat = document.getElementById('manual-seat').value.trim();
+  if (!name || !seat) { showToast('请填写姓名和座位号'); return; }
+  if (attendees.find(a => a.name === name)) { showToast('该姓名已存在'); return; }
+  attendees.push({ name, seat, checked: false, checkedAt: null });
+  saveData();
+  document.getElementById('manual-name').value = '';
+  document.getElementById('manual-seat').value = '';
+  updateStats();
+  renderTable();
+  showToast(`已添加 ${name}`);
+}
+
+// ─── Stats ───
+function updateStats() {
+  const total = attendees.length;
+  const checked = attendees.filter(a => a.checked).length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-checked').textContent = checked;
+  document.getElementById('stat-pending').textContent = total - checked;
+}
+
+// ─── Table ───
+function renderTable() {
+  const search = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+  const tbody = document.querySelector('#attendee-table tbody');
+  const filtered = attendees.filter(a => !search || a.name.toLowerCase().includes(search));
+
+  tbody.innerHTML = filtered.map(a => `
+    <tr>
+      <td style="font-weight:500;">${escHtml(a.name)}</td>
+      <td style="color:var(--accent);font-weight:700;">${escHtml(a.seat)}</td>
+      <td>
+        <span class="status-badge ${a.checked ? 'checked' : 'pending'}">
+          ${a.checked ? '已签到' : '未签到'}
+        </span>
+      </td>
+    </tr>`).join('');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--text-dim);padding:32px;">暂无数据</td></tr>`;
+  }
+}
+
+// ─── QR Code ───
+function generateQR() {
+  const canvas = document.getElementById('qr-canvas');
+  new QRious({
+    element: canvas,
+    value: window.location.href,
+    size: 220,
+    backgroundAlpha: 0,
+    foreground: '#c9a54e',
+    level: 'H',
+  });
+  showToast('二维码已生成');
+}
+
+// ─── Clear Data ───
+function clearAllData() {
+  if (confirm('确定清空所有参会人员数据吗？此操作不可恢复。')) {
+    attendees = [];
+    saveData();
+    updateStats();
+    renderTable();
+    showToast('数据已清空');
+  }
+}
+
+// ─── Helpers ───
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── Drag & Drop ───
+const uz = document.getElementById('upload-zone');
+if (uz) {
+  uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag-over'); });
+  uz.addEventListener('dragleave', () => uz.classList.remove('drag-over'));
+  uz.addEventListener('drop', e => {
+    e.preventDefault();
+    uz.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith('.csv')) {
+      const reader = new FileReader();
+      reader.onload = ev => parseCSV(ev.target.result);
+      reader.readAsText(file);
+    } else {
+      showToast('请上传 .csv 文件');
+    }
+  });
+}
+
+// ─── Enter key ───
+document.getElementById('checkin-name')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') doCheckin();
+});
+document.getElementById('admin-pwd')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') adminLogin();
+});
+
+// ─── Init ───
+(async function init() {
+  await loadData();
+  updateStats();
+  renderTable();
+})();
+</script>
+
+</body>
+</html>
