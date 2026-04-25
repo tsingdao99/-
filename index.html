@@ -494,7 +494,7 @@ function parseCSV(text){
 
 function parseSeatId(name,seat){
   // 屏幕左第一列3号 → r:5, c:8
-  const m=seat.match(/屏幕(左|右)第(一|二|三|四)列(\d+)号/);
+  const m=seat.match(/屏幕(左|右)第(一|二|三|四)列(\d+)位/);
   if(m){
     const side=m[1];
     const colMap={'一':1,'二':2,'三':3,'四':4};
@@ -506,7 +506,7 @@ function parseSeatId(name,seat){
     const c=side==='左'?[0,8,6,4,2][cn]:[0,18,20,22,24][cn];
     return {r,c,id:seat,name,zone:'blue',side};
   }
-  const m2=seat.match(/A区第(\d+)个/);
+  const m2=seat.match(/A区第(\d+)位/);
   if(m2){
     const idx=parseInt(m2[1]);
     return {r:21,c:8+idx,id:seat,name,zone:'blue',side:'center'};
